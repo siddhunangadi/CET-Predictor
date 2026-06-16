@@ -1,0 +1,6 @@
+streamlit
+pdfplumber
+pandas
+langchain
+langchain-mistralai
+langchain-pinecone
