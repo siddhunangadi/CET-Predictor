@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Predict your KCET college admissions based on rank, category, and preferred branches using historical round cutoffs and seat-matrix shifts.">
+    <title>KCET College Predictor & Chatbot</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar Options Panel -->
+        <aside class="sidebar" id="control-panel">
+            <div class="sidebar-header">
+                <h1>KCET Predictor</h1>
+                <p class="subtitle">Admission & Cutoff Analysis</p>
+            </div>
+            
+            <form id="predictor-form" class="predictor-form">
+                <div class="form-group">
+                    <label for="rank-input">KCET Rank</label>
+                    <input type="number" id="rank-input" placeholder="e.g., 4500" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category-input">Category</label>
+                    <select id="category-input" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="GM">General Merit (GM)</option>
+                        <option value="GMR">General Merit Rural (GMR)</option>
+                        <option value="GMK">General Merit Kannada (GMK)</option>
+                        <option value="1G">Category 1 General (1G)</option>
+                        <option value="2AG">Category 2A General (2AG)</option>
+                        <option value="2AR">Category 2A Rural (2AR)</option>
+                        <option value="2BG">Category 2B General (2BG)</option>
+                        <option value="3AG">Category 3A General (3AG)</option>
+                        <option value="3BG">Category 3B General (3BG)</option>
+                        <option value="SCG">SC General (SCG)</option>
+                        <option value="STG">ST General (STG)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Preferred Branches</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="branches" value="CS" checked>
+                            <span class="checkmark"></span> Computer Science (CS)
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="branches" value="IS" checked>
+                            <span class="checkmark"></span> Information Science (IS)
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="branches" value="EC" checked>
+                            <span class="checkmark"></span> Electronics & Comm (EC)
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" name="branches" value="AI" checked>
+                            <span class="checkmark"></span> Artificial Intelligence (AI)
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" id="predict-btn" class="primary-btn">Calculate Recommendations</button>
+            </form>
+
+            <div class="sidebar-footer">
+                <p>Includes Seat-Matrix Shifts for 2026</p>
+            </div>
+        </aside>
+        
+        <!-- Main Chat & Results Section -->
+        <main class="main-content">
+            <!-- Top Dashboard Header -->
+            <header class="main-header">
+                <div class="logo">
+                    <span class="pulse-indicator"></span>
+                    <h2>Recommendation Dashboard</h2>
+                </div>
+                <div class="theme-toggle">
+                    <span class="status-text">Round 1, 2, and 3 Active</span>
+                </div>
+            </header>
+            
+            <div class="workspace-grid">
+                <!-- Chat Assistant Component -->
+                <section class="chat-panel" id="chat-section">
+                    <div class="chat-header">
+                        <h3>Assistant Chatbot</h3>
+                        <span class="info-tag">Agentic Guidance</span>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will load dynamically here -->
+                        <div class="message bot-message">
+                            <p>Hello! I am your <strong>KCET Admission Assistant</strong>. I can query previous round cutoffs and seat matrix shifts for you.</p>
+                            <p>Try typing: <em>"My rank is 4500 and category is GM. What CS options do I have?"</em></p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ask anything about ranks or cutoffs...">
+                        <button id="send-chat-btn" class="send-btn">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- Prediction Results Cards Grid -->
+                <section class="results-panel" id="results-section">
+                    <div class="results-header">
+                        <h3>Recommended Options</h3>
+                        <div class="results-filter">
+                            <span class="filter-tab active" data-filter="all">All</span>
+                            <span class="filter-tab" data-filter="Safe">Safe</span>
+                            <span class="filter-tab" data-filter="Target">Target</span>
+                            <span class="filter-tab" data-filter="Dream">Dream</span>
+                        </div>
+                    </div>
+                    
+                    <div class="results-grid" id="results-grid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                            <p>Submit your parameters or talk to the chatbot to view recommendations.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Client Scripts -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
