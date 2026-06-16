@@ -4,14 +4,7 @@ import os
 import re
 import json
 import uuid
-import pdfplumber
 import pandas as pd
-from langchain_mistralai import MistralAIEmbeddings, ChatMistralAI
-from langchain_pinecone import PineconeVectorStore
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema.runnable import RunnablePassthrough
-from langchain.schema.output_parser import StrOutputParser
-from langchain.schema import Document
 
 # Set page config for beautiful layout
 st.set_page_config(
@@ -573,10 +566,16 @@ def clean_and_extract_course(course_cell):
         
     return "XX", text.title()
 
-# Layout-aware PDF Cutoff Parsing Engine
 def parse_and_store_pdf(uploaded_file, year, round_num, api_keys_dict, progress_bar, status_text):
+    # Lazy imports to prevent application startup crash on Streamlit Cloud
+    import pdfplumber
+    from langchain.schema import Document
+    from langchain_mistralai import MistralAIEmbeddings
+    from langchain_pinecone import PineconeVectorStore
+
     # Save file to temp disk
     temp_pdf_path = f"temp_{uploaded_file.name}"
+
     with open(temp_pdf_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
         
@@ -1103,8 +1102,14 @@ with chatbot_tab:
             with st.spinner("Analyzing recommendations..."):
                 if mistral_key and context_str:
                     try:
+                        # Lazy imports to prevent application startup crash on Streamlit Cloud
+                        from langchain_mistralai import ChatMistralAI
+                        from langchain.prompts import ChatPromptTemplate
+                        from langchain.schema.output_parser import StrOutputParser
+
                         # Full Vector-RAG chatbot response using Mistral AI
                         prompt_template = ChatPromptTemplate.from_template("""
+
                         You are a premium, expert KCET Admission Recommendation assistant.
                         Answer the student's question concisely using only the matching historical data (context) below.
                         
